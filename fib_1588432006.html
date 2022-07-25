@@ -1,0 +1,36 @@
+<script>
+    function* fib() {
+        let a = 1;
+        let b = 1;
+        yield 1;
+        yield 1;
+        while (true) {
+            let c = a + b;
+            a = b;
+            b = c;
+            yield b;
+        }
+    }
+    let f = fib();
+    //    console.log(f.next());
+    //    console.log(f.next());
+    //    console.log(f.next());
+    //    console.log(f.next());
+    //    console.log(f.next());
+    //    console.log(f.next());
+    //    console.log(f.next());
+
+    async function* asyncFib(num) {
+        for (let i = 1; i <= num; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            yield `${f.next().value} num: ${i}`;
+        }
+    }
+
+    (async () => {
+        for await (let val of asyncFib(10)) {
+            console.log(val);
+        }
+    })();
+
+</script>

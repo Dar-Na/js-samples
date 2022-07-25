@@ -1,0 +1,42 @@
+<script>
+    function multiplyMatrix(A, B) {
+        let rowsA = A.length;
+        let colsA = A[0].length;
+        let rowsB = B.length;
+        let colsB = B[0].length;
+        let C = [];
+        if (colsA != rowsB) return false;
+        for (let i = 0; i < rowsA; i++) C[i] = [];
+        for (let k = 0; k < colsB; k++) {
+            for (let i = 0; i < rowsA; i++) {
+                let t = 0;
+                for (let j = 0; j < rowsB; j++) {
+                    t += A[i][j] * B[j][k]; 
+                }   
+                C[i][k] = t;
+            }
+        }
+        return C;
+    }
+    const a = [
+        [2, 1],
+        [1, 2],
+        [3, 0],
+    ];
+    const b = [
+        [1, 0, 1],
+        [2, 1, 0],
+    ];
+    const c = [
+        [1],
+        [1],
+        [1],
+        [0],
+    ];
+    const d = [
+        [0, 1, 1, 1],
+    ];
+    console.log(multiplyMatrix(a, b));
+    //console.log(multiplyMatrix(c, d));
+
+</script>

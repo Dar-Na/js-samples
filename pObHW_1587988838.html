@@ -1,0 +1,103 @@
+<body>
+    <script>
+        class Publisher {
+            _subscribers = [];
+            _state = {};
+            constructor(descriptor) {
+                this.descriptor = descriptor;
+            }
+            addSubscriber(subscriber) {
+                this._subscribers.push(subscriber);
+            }
+            _notifySubscribers() {
+                const [...subscribers] = this._subscribers;
+                subscribers.forEach(subscriber => {
+                    subscriber.update(this._state);
+                })
+            }
+            _setState(state) {
+                this._state = Object.assign( {}, this._state, state);
+                this._notifySubscribers();
+            }
+        }
+
+        class Subscriber {
+            constructor(descriptor) {
+                this.descriptor = descriptor;
+            }
+            update(state) {
+                console.log(`I'm (${this.descriptor}) updating: `, state);
+            }
+        }
+        
+        class Alert extends Subscriber {
+            constructor () {
+                super();
+            }
+            update(state){
+                window.alert(`Button ${state.num} is pressed!`);
+            }
+        }
+
+        class ButtonGroup extends Publisher {
+            constructor(btnsDescriptions) {
+                super();
+                this.btns = btnsDescriptions.map((btnDesc, n) => {
+                    const btn = document.createElement('button');
+                    btn.textContent = btnDesc.name;
+                    btn.addEventListener('click', this.btnClick);
+                    btn.dataset.num = n;
+                    return btn;
+                })
+                document.body.append(...this.btns);
+            }
+            btnClick = (e) => {
+                this._setState ({
+                    num: e.target.dataset.num,
+                })
+            }
+        }
+        
+        class Fetcher extends Subscriber {
+            update(state){
+                const uri = `https://api.github.com/users/${+state.num}`
+//                fetch('https://api.github.com/users/0')
+//                    .then( res => { return res.json() } )
+//                    .then(body => console.log(body));
+//                console.log(uri);
+                const p = new Promise(function(resolve, reject) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', uri);
+                    xhr.send();
+                    xhr.onload = () => {
+                        resolve(JSON.parse(xhr.response));
+                    }
+                })
+                .then(res => {
+                    console.log(res);
+                })
+            }
+                
+
+        }
+        
+        const btnGroup = new ButtonGroup ([
+            {name: 'One'},
+            {name: 'Two'},
+        ]);
+        
+        const sub1 = new Subscriber('sub1');
+        const sub2 = new Subscriber('sub2');
+        const sub3 = new Subscriber('sub3');
+        
+        btnGroup.addSubscriber(sub1);
+        btnGroup.addSubscriber(sub2);
+        btnGroup.addSubscriber(sub3);
+        
+        const alert = new Alert();
+        btnGroup.addSubscriber(alert);
+        
+        const fetch = new Fetcher();
+        btnGroup.addSubscriber(fetch);
+    </script>
+</body>

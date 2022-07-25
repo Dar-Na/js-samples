@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Value</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #CurValueBuy {
+                margin: 30px;
+                padding: 15px 30px;
+                border: 4px solid;
+                border-radius: 5px;
+                border-style: double;
+                width:fit-content;
+                box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+            }
+            #CurValueSell {
+                margin: 30px;
+                padding: 15px 30px;
+                border: 4px solid;
+                border-radius: 5px;
+                border-style: double;
+                width:fit-content;
+                box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+            }
+            #calculate {
+                margin: 30px;
+                padding: 15px 30px;
+                border: 4px solid;
+                border-radius: 5px;
+                border-style: double;
+                width:fit-content;
+                box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+            }
+            #wrapper {
+                display: flex;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <ul id="CurValueSell"></ul>
+            <ul id="CurValueBuy"></ul>
+        </div>
+        <script>
+            fetch('http://api.nbp.pl/api/exchangerates/tables/A/')
+                .then(response => response.json())
+                .then(commits => {
+                    console.log(commits);
+                    console.log(commits[0].rates);
+                    let elem_ul = document.getElementById('CurValueBuy');
+                    commits[0].rates.map(cur => {
+                        let li = document.createElement('li');
+                        let l = `(${cur.code}) ${cur.currency}: ${cur.mid}`;
+                        li.append(l);
+                        elem_ul.append(li); 
+                    })});
+            fetch('http://api.nbp.pl/api/exchangerates/tables/C/')
+                .then(response => response.json())
+                .then(commits => {
+                    console.log(commits);
+                    console.log(commits[0].rates);
+                    let elem_ul = document.getElementById('CurValueSell');
+                    commits[0].rates.map(cur => {
+                        let li = document.createElement('li');
+                        let l = `(${cur.code}) ${cur.currency}: ${cur.bid}`;
+                        li.append(l);
+                        elem_ul.append(li); 
+                    })});
+        </script>
+    </body>
